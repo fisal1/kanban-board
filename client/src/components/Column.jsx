@@ -9,10 +9,13 @@ const Column = ({ id, title, tasks = [], color, onDelete }) => {
   if (!confirm("Delete this task?")) return;
   setDeletingIds((prev) => new Set(prev).add(taskId));
   try {
-    await apiDeleteTask(taskId); // Delete via API
-    if (onDelete) onDelete(taskId); // Just update state, don't delete again
+    // Remove this line - don't delete here
+    // await apiDeleteTask(taskId);
+    
+    // Just call the parent's onDelete, which will handle the API call
+    if (onDelete) onDelete(taskId);
   } catch (err) {
-    const msg = err?.response?.data?.message || err?.message || "Failed to delete task";
+    const msg = err && err.message ? err.message : "Failed to delete task";
     alert(msg);
   } finally {
     setDeletingIds((prev) => {
@@ -77,4 +80,3 @@ const Column = ({ id, title, tasks = [], color, onDelete }) => {
 };
 
 export default Column;
-
