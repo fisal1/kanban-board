@@ -58,9 +58,9 @@ function App() {
     try {
       await deleteTask(id);
       setTasks((prev) => ({
-        ...prev,
-        [col]: (prev[col] || []).filter((t) => String(t._id || t.id) !== String(id)),
-      }));
+    ...prev,
+    [col]: (prev[col] || []).filter((t) => String(t._id || t.id) !== String(id)),
+  }));
     } catch (err) {
       console.error("Delete failed", err);
       alert(err.message || "Failed to delete task");
