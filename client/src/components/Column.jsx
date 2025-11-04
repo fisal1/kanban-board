@@ -6,22 +6,22 @@ const Column = ({ id, title, tasks = [], color, onDelete }) => {
   const [deletingIds, setDeletingIds] = useState(new Set());
 
   const handleDelete = async (taskId) => {
-    if (!confirm("Delete this task?")) return;
-    setDeletingIds((prev) => new Set(prev).add(taskId));
-    try {
-      await apiDeleteTask(taskId);
-      if (onDelete) onDelete(taskId);
-    } catch (err) {
-      const msg = err && err.message ? err.message : "Failed to delete task";
-      alert(msg);
-    } finally {
-      setDeletingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(taskId);
-        return next;
-      });
-    }
-  };
+  if (!confirm("Delete this task?")) return;
+  setDeletingIds((prev) => new Set(prev).add(taskId));
+  try {
+    await apiDeleteTask(taskId); // Delete via API
+    if (onDelete) onDelete(taskId); // Just update state, don't delete again
+  } catch (err) {
+    const msg = err?.response?.data?.message || err?.message || "Failed to delete task";
+    alert(msg);
+  } finally {
+    setDeletingIds((prev) => {
+      const next = new Set(prev);
+      next.delete(taskId);
+      return next;
+    });
+  }
+};
 
   // make tasks safe for rendering (filter out null/undefined, ensure array)
   const safeTasks = Array.isArray(tasks) ? tasks.filter(Boolean) : [];
@@ -77,3 +77,4 @@ const Column = ({ id, title, tasks = [], color, onDelete }) => {
 };
 
 export default Column;
+
