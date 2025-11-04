@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api/tasks",
+  baseURL: "https://kanban-board-backend-gmxy.onrender.com/api/tasks",
 });
 
 export const getTasks = () => API.get("/");

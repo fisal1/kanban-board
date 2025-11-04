@@ -1,17 +1,26 @@
 import axios from 'axios';
-import { getToken } from './auth';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000/api';
+// Use relative URL in production, localhost in development
+const baseURL = import.meta.env.VITE_API_BASE || 
+  (import.meta.env.MODE === 'production' ? '/api' : 'http://localhost:5000/api');
 
-const api = axios.create({
-  baseURL: API_BASE,
-  headers: { 'Content-Type': 'application/json' },
+const axiosInstance = axios.create({
+  baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = getToken();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-}, (error) => Promise.reject(error));
+// Add token to requests if available
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('kanban_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export default api;
+export default axiosInstance;
